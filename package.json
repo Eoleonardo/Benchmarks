@@ -1,0 +1,22 @@
+{
+  "name": "tcc-orm-benchmark",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test:create": "node ./benchmarks/create-bench.js",
+    "test:read": "node ./benchmarks/read-bench.js",
+    "test:update": "node ./benchmarks/update-bench.js",
+    "test:delete": "node ./benchmarks/delete-bench.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^6.19.1",
+    "mitata": "^1.0.34",
+    "mysql2": "^3.16.0",
+    "prisma": "^6.19.1",
+    "sequelize": "^6.37.7"
+  }
+}
