@@ -18,7 +18,7 @@ async function iniciar() {
 
     bench('Prisma v6', async () => {
       await prismaRepo.create({ 
-        nome: 'User Prisma', email: `prisma_${Math.random()}@test.com`, senha: '123' 
+        nome: 'User Pri', email: `prisma_${Math.random()}@test.com`, senha: '123' 
       });
     });
 
