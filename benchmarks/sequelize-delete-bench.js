@@ -2,31 +2,46 @@ const { run, bench, group } = require('mitata');
 const mysql = require('mysql2/promise');
 const path = require('path');
 
-
 const seqRepo = require(path.join(__dirname, '../src/sequelize/repo'));
 
 async function iniciar() {
-  const conn = await mysql.createConnection({ host: 'localhost', user: 'root', password: '', database: 'tcc' });
+  const conn = await mysql.createConnection({ 
+    host: 'localhost', 
+    user: 'root', 
+    password: '', 
+    database: 'tcc' 
+  });
   
-  // Busca IDs para deletar
-  const [rows] = await conn.execute('SELECT id FROM cliente LIMIT 1000');
+  // 1. Busca IDs existentes (Aumente o LIMIT se for rodar muitas amostras)
+  // Certifique-se que o nome da tabela aqui é o mesmo do seu banco (cliente ou clienteSequelize)
+  const [rows] = await conn.execute('SELECT id FROM clienteSequelize LIMIT 5000');
   const ids = rows.map(r => r.id);
-  let i = 0;
+  
+  // Controle de qual ID será o próximo a ser deletado
+  let cursor = 0;
 
-  group('Operação: DELETE', () => {
-   
+  group('• Operação: DELETE', () => {
+    
     bench('Sequelize', async () => {
-      await seqRepo.delete(ids[i % ids.length]);
-      i++;
+      // Pega o ID atual e move o cursor para o próximo
+      const id = ids[cursor];
+      
+      if (id !== undefined) {
+        await seqRepo.delete(id);
+        cursor++;
+      } else {
+        // Se acabarem os IDs do array, o benchmark para de tentar deletar
+        // Isso evita o erro de "undefined" no Sequelize
+        return; 
+      }
     });
   });
 
- await run({
-  avg: true, // mostra a média
-  json: false, // mantém a saída legível no console
-  colors: true, // mantém as cores
-  min_samples: 1000, // garante no mínimo 1.000 coletas
-});
+  await run({
+    avg: true,
+    min_samples: 1000, 
+  });
+
   await conn.end();
 }
 

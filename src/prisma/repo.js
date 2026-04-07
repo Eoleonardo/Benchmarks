@@ -21,7 +21,7 @@ module.exports = {
   },
 
   delete: async (id) => {
-    return await prisma.clientePrisma.delete({
+    return await prisma.clientePrisma.deleteMany({
       where: { id: Number(id) }
     });
   }
