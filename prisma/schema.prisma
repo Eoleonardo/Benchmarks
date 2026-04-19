@@ -19,5 +19,4 @@ model ClientePrisma {
   nome         String
   email        String   @unique
   senha        String
-  data DateTime @default(now())
 }
