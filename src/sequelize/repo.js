@@ -1,5 +1,5 @@
 const { Sequelize, DataTypes } = require("sequelize");
-const sequelize = new Sequelize("tcc", "root", "senhasenha", {
+const sequelize = new Sequelize("tcc", "root", "", {
   host: "localhost",
   dialect: "mysql",
   logging: false,
@@ -20,6 +20,9 @@ module.exports = {
   read: async () => await ClienteSequelize.findAll(),
   update: async (id, nome) =>
     await ClienteSequelize.update({ nome }, { where: { id } }),
-  delete: async (id) => await ClienteSequelize.destroy({ where: { id } }),
-  ClienteSequelize,
+  delete: async () => {
+    return await ClienteSequelize.destroy({ 
+      where: {},
+     });
+   }
 };

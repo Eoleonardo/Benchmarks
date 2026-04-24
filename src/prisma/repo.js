@@ -20,9 +20,9 @@ module.exports = {
     });
   },
 
-  delete: async (id) => {
+  delete: async () => {
     return await prisma.clientePrisma.deleteMany({
-      where: { id: Number(id) }
+      where: {},
     });
   }
 };

@@ -43,7 +43,7 @@ async function iniciar() {
     avg: true,
     json: false,
     colors: true,
-    min_samples: 1000
+    min_samples: 3
   });
 
   // Fechar conexão após o teste

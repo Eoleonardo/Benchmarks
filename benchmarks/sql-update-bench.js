@@ -19,7 +19,7 @@ async function iniciar() {
 
   // 2. Criar um usuário fixo para servir de alvo nos testes
   // Isso evita o erro "No record was found for an update"
-  const tempUser = await prismaRepo.create({ 
+  const tempUser = await sqlRepo.create({ 
     nome: 'User Original', 
     email: `update_test_${Date.now()}@test.com`, 
     senha: '123' 
@@ -40,7 +40,7 @@ async function iniciar() {
     avg: true,
     json: false,
     colors: true,
-    min_samples: 1000
+    min_samples: 3000
   });
 
   // Fechar conexão após o teste
