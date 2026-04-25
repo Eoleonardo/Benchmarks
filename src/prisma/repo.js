@@ -1,4 +1,5 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require("@prisma/client");
+const { where } = require("sequelize");
 
 // Instancia o ClientePrisma. O Prisma já saberá procurar o schema na pasta raiz /prisma
 const prisma = new PrismaClient();
@@ -16,13 +17,15 @@ module.exports = {
     // Usamos 'update' para atualizar por ID único
     return await prisma.clientePrisma.update({
       where: { id: Number(id) }, // Garante que o ID seja um número
-      data: { nome }
+      data: { nome },
     });
   },
 
-  delete: async () => {
-    return await prisma.clientePrisma.deleteMany({
-      where: {},
+  delete: async (id) => {
+    return await prisma.clientePrisma.delete({
+      where: {
+        id: id,
+      },
     });
-  }
+  },
 };
