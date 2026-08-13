@@ -13,7 +13,7 @@ async function iniciar() {
     host: 'localhost', 
     user: 'root', 
     password: '', 
-    database: 'tcc' 
+    database: 'clientes' 
   });
 
   console.log('Preparando ambiente para o benchmark de UPDATE...');

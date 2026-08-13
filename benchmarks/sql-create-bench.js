@@ -1,44 +1,47 @@
-const { run, bench, group } = require('mitata');
-const mysql = require('mysql2/promise');
-const path = require('path');
+const { run, bench, group } = require("mitata");
+const mysql = require("mysql2/promise");
+const path = require("path");
 
-const pLimit = require("p-limit").default;
+const sqlRepo = require(path.join(__dirname, "../src/sql/repo"));
 
-const limitarAsyncs = pLimit(500);
-
-const sqlRepo = require(path.join(__dirname, '../src/sql/repo'));
+const TOTAL_AMOSTRAS = 1000;
+let contador = 0;
 
 async function iniciar() {
-  const conn = await mysql.createConnection({ 
-    host: 'localhost', 
-    user: 'root', 
-    password: '', 
-    database: 'tcc' 
+  const conn = await mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "clientes",
   });
 
-  group('Operação: CREATE (Single Insert)', () => {
-    bench('SQL Puro', async () => {
-      await Promise.all(
-        Array.from({ length: 1000 }, (_, i) =>
-          limitarAsyncs(() =>
-      sqlRepo.create(conn, { 
-        nome: 'User SQL', 
-        email: `sql_${Math.random()}@test.com`, 
-        senha: '123' 
-          }),
-          ),
-        ),
-      );
+  console.log("Benchmark: SQL Puro - CREATE");
+
+  group("Operação: CREATE - 1 registro", () => {
+    bench("SQL Puro", async () => {
+      contador++;
+
+      await sqlRepo.create(conn, {
+        nome: "User SQL",
+        email: `bench_sql_${Date.now()}_${contador}@test.com`,
+        senha: "123",
+      });
     });
   });
 
   await run({
-  avg: true, // mostra a média
-  json: false, // mantém a saída legível no console
-  colors: true, // mantém as cores
-  min_samples: 3, // garante no mínimo 1.000 coletas
-});
+    avg: true,
+    json: false,
+    colors: true,
+    min_samples: TOTAL_AMOSTRAS,
+  });
+
   await conn.end();
+
+  console.log("Benchmark finalizado.");
 }
 
-iniciar();
+iniciar().catch((err) => {
+  console.error("Erro ao executar benchmark:", err);
+  process.exit(1);
+});

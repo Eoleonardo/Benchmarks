@@ -1,30 +1,40 @@
-const { run, bench, group } = require('mitata');
-const mysql = require('mysql2/promise');
+const { run, bench, group } = require("mitata");
+const mysql = require("mysql2/promise");
+const path = require("path");
 
-// Importando os Repositórios (Lógica isolada)
-const sqlRepo = require('../src/sql/repo');
+const sqlRepo = require(path.join(__dirname, "../src/sql/repo"));
 
+const TOTAL_AMOSTRAS = 1000;
 
-async function iniciarBenchmark() {
-  // Setup da conexão para o SQL Puro (necessário para o repo de SQL)
-  const conn = await mysql.createConnection({ 
-    host: 'localhost', user: 'root', password: '', database: 'tcc' 
+async function iniciar() {
+  const conn = await mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "clientes",
   });
 
-  console.log("📊 [BENCHMARK] Operação: READ (Select All)");
-  console.log("--------------------------------------------");
+  console.log("Benchmark: SQL Puro - READ");
 
-  group('', () => {
-    
-    bench('SQL Puro', async () => {
+  group("Operação: READ - Select All", () => {
+    bench("SQL Puro", async () => {
       await sqlRepo.read(conn);
     });
   });
 
-  await run();
+  await run({
+    avg: true,
+    json: false,
+    colors: true,
+    min_samples: TOTAL_AMOSTRAS,
+  });
 
-  // Fechando conexões
   await conn.end();
+
+  console.log("Benchmark finalizado.");
 }
 
-iniciarBenchmark().catch(console.error);
+iniciar().catch((err) => {
+  console.error("Erro ao executar benchmark:", err);
+  process.exit(1);
+});

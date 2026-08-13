@@ -1,12 +1,33 @@
-const mysql = require('mysql2/promise');
+async function create(conn, data) {
+  return await conn.execute(
+    "INSERT INTO cliente (nome, email, senha) VALUES (?, ?, ?)",
+    [data.nome, data.email, data.senha]
+  );
+}
 
-async function getConn() {
-  return await mysql.createConnection({ host: 'localhost', user: 'root', password: '', database: 'tcc' });
+async function read(conn) {
+  return await conn.execute(
+    "SELECT * FROM cliente"
+  );
+}
+
+async function update(conn, id, nome) {
+  return await conn.execute(
+    "UPDATE cliente SET nome = ? WHERE id = ?",
+    [nome, id]
+  );
+}
+
+async function deleteRecord(conn, id) {
+  return await conn.execute(
+    "DELETE FROM cliente WHERE id = ?",
+    [id]
+  );
 }
 
 module.exports = {
-  create: async (conn, d) => await conn.execute('INSERT INTO cliente (nome, email, senha) VALUES (?, ?, ?)', [d.nome, d.email, d.senha]),
-  read: async (conn) => await conn.execute('SELECT * FROM cliente'),
-  update: async (conn, id, nome) => await conn.execute('UPDATE cliente SET nome = ? WHERE id = ?', [nome, id]),
-  delete: async (conn, id) => await conn.execute('DELETE FROM cliente WHERE id = ?', [id])
+  create,
+  read,
+  update,
+  delete: deleteRecord,
 };

@@ -1,33 +1,32 @@
 const { run, bench, group } = require("mitata");
-const mysql = require("mysql2/promise");
 const path = require("path");
 
 const prismaRepo = require(path.join(__dirname, "../src/prisma/repo"));
 
-async function iniciar() {
-  const conn = await mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "tcc",
-  });
+const TOTAL_AMOSTRAS = 1000;
+let contador = 0;
 
-  group("Operação: CREATE (Single Insert)", () => {
+async function iniciar() {
+  group("Operação: CREATE - 1 registro", () => {
     bench("Prisma v6", async () => {
-      prismaRepo.create({
-        nome: "User Pri",
-        email: `prisma_${Math.random()}@test.com`,
+      contador++;
+
+      await prismaRepo.create({
+        nome: "User Prisma",
+        email: `bench_prisma_${Date.now()}_${contador}@test.com`,
         senha: "123",
       });
     });
   });
 
   await run({
-    avg: true, // mostra a média
-    json: false, // mantém a saída legível no console
-    colors: true, // mantém as cores
+    avg: true,
+    json: false,
+    colors: true,
+    min_samples: TOTAL_AMOSTRAS,
   });
-  await conn.end();
+
+  await prismaRepo.disconnect();
 }
 
-iniciar();
+iniciar().catch(console.error);

@@ -1,30 +1,32 @@
-const { run, bench, group } = require('mitata');
-const mysql = require('mysql2/promise');
+const { run, bench, group } = require("mitata");
+const path = require("path");
 
-// Importando os Repositórios (Lógica isolada)
+const seqRepo = require(path.join(__dirname, "../src/sequelize/repo"));
 
-const seqRepo = require('../src/sequelize/repo');
+const TOTAL_AMOSTRAS = 1000;
 
-async function iniciarBenchmark() {
-  // Setup da conexão para o SQL Puro (necessário para o repo de SQL)
-  const conn = await mysql.createConnection({ 
-    host: 'localhost', user: 'root', password: '', database: 'tcc' 
-  });
+async function iniciar() {
+  console.log("Benchmark: Sequelize - READ");
 
-  console.log("📊 [BENCHMARK] Operação: READ (Select All)");
-  console.log("--------------------------------------------");
-
-  group('', () => {
-    
-    bench('Sequelize', async () => {
+  group("Operação: READ - Select All", () => {
+    bench("Sequelize", async () => {
       await seqRepo.read();
     });
   });
 
-  await run();
+  await run({
+    avg: true,
+    json: false,
+    colors: true,
+    min_samples: TOTAL_AMOSTRAS,
+  });
 
-  // Fechando conexões
-  await conn.end();
+  await seqRepo.disconnect();
+
+  console.log("Benchmark finalizado.");
 }
 
-iniciarBenchmark().catch(console.error);
+iniciar().catch((err) => {
+  console.error("Erro ao executar benchmark:", err);
+  process.exit(1);
+});

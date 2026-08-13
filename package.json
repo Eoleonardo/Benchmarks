@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test:create": "node ./benchmarks/create-bench.js",
+    "test:create-prisma": "node ./benchmarks/create-bench.js",
     "test:read": "node ./benchmarks/read-bench.js",
     "test:update": "node ./benchmarks/update-bench.js",
     "test:delete": "node ./benchmarks/delete-bench.js"

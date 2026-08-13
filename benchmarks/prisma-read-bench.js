@@ -9,7 +9,7 @@ const prismaRepo = require('../src/prisma/repo');
 async function iniciarBenchmark() {
   // Setup da conexão para o SQL Puro (necessário para o repo de SQL)
   const conn = await mysql.createConnection({ 
-    host: 'localhost', user: 'root', password: '', database: 'tcc' 
+    host: 'localhost', user: 'root', password: '', database: 'clientes' 
   });
 
   console.log("📊 [BENCHMARK] Operação: READ (Select All)");
